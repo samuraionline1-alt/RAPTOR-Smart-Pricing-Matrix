@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAPTOR GO Energy Gel | พรีเมี่ยมทุกจังหวะพลัง</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1116;
+        --panel: #161a23;
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --orange-1: #ff5a00;
+        --orange-2: #ff8a00;
+        --gold: #ffd66b;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: 'Noto Sans Thai', sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 20% 10%, #2a2f3c 0%, var(--bg) 45%), #0b0d12;
+      }
+
+      .container {
+        width: min(1120px, 92vw);
+        margin: 0 auto;
+      }
+
+      .hero {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 56px 0;
+      }
+
+      .hero-card {
+        background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 28px;
+        backdrop-filter: blur(10px);
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 20px;
+        overflow: hidden;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+      }
+
+      .copy {
+        padding: 54px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+        color: white;
+        font-weight: 700;
+        margin-bottom: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3.6rem);
+        line-height: 1.12;
+      }
+
+      .gradient {
+        background: linear-gradient(90deg, #ff5a00, #ffbb00);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      .desc {
+        color: var(--muted);
+        font-size: clamp(1rem, 2vw, 1.16rem);
+        margin: 18px 0 28px;
+        max-width: 54ch;
+      }
+
+      .points {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+
+      .point {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 500;
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 0;
+        border-radius: 12px;
+        padding: 13px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(90deg, var(--orange-1), var(--orange-2));
+      }
+
+      .btn-secondary {
+        color: #fff;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.35);
+      }
+
+      .visual {
+        position: relative;
+        display: grid;
+        place-items: center;
+        padding: 30px 24px;
+        background:
+          radial-gradient(circle at 70% 20%, rgba(255,132,0,0.3), transparent 50%),
+          linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
+      }
+
+      .product {
+        width: min(350px, 100%);
+        max-height: 74vh;
+        object-fit: contain;
+        filter: drop-shadow(0 30px 35px rgba(255, 88, 0, 0.35));
+      }
+
+      .price {
+        position: absolute;
+        bottom: 18px;
+        right: 18px;
+        background: #090b10;
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 16px;
+        padding: 14px 16px;
+        text-align: right;
+      }
+
+      .price small { color: var(--muted); display: block; }
+      .price strong { font-size: 1.6rem; color: var(--gold); }
+
+      @media (max-width: 940px) {
+        .hero-card { grid-template-columns: 1fr; }
+        .copy { padding: 32px 24px 10px; }
+        .visual { padding-top: 8px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="hero">
+      <section class="hero-card container">
+        <div class="copy">
+          <span class="badge">Premium Energy Formula</span>
+          <h1>
+            RAPTOR <span class="gradient">GO Energy Gel</span><br />
+            พลังงานทันที 120 kcal พร้อมลุยทุกกิจกรรม
+          </h1>
+          <p class="desc">
+            เจลพลังงานสำหรับคนแอคทีฟ เติมแรงได้ไว รสชาติดื่มง่าย เหมาะทั้งวิ่ง ปั่น เวท และกิจกรรมเอาท์ดอร์
+            ด้วยวิตามินสำคัญที่ช่วยให้ร่างกายพร้อมใช้งานทุกช่วงเวลา
+          </p>
+          <div class="points">
+            <div class="point">⚡ เพิ่มพลังงานทันที • 120 kcal ต่อซอง</div>
+            <div class="point">🦴 มีส่วนช่วยบำรุงกระดูก และการฟื้นตัวหลังออกกำลังกาย</div>
+            <div class="point">🛡️ สูตรปลอดภัย พกพาง่าย พร้อมทานทุกที่</div>
+          </div>
+          <div class="cta-row">
+            <a href="#" class="btn btn-primary">สั่งซื้อทันที</a>
+            <a href="#" class="btn btn-secondary">ดูรีวิวสินค้า</a>
+          </div>
+        </div>
+
+        <div class="visual">
+          <img src="Gemini_Generated_Image_fxahpafxahpafxah.png" alt="RAPTOR GO Energy Gel" class="product" />
+          <div class="price">
+            <small>ราคาโปรโมชั่น</small>
+            <strong>฿39</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
