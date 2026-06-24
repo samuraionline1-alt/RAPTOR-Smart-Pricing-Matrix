@@ -231,11 +231,11 @@
             // 1. คำนวณราคาส่งออฟไลน์ (Isolated Wholesale Logic)
             // ----------------------------------------------------
             // คิดราคาส่งจากต้นทุนสินค้าเท่านั้น ไม่รวมค่าธรรมเนียมแพลตฟอร์มและค่าแพ็ค
-            // ราคาส่งจะเกี่ยวข้องเฉพาะมาร์จิ้นขายส่งและ VAT 7% ตามสวิตช์ VAT
-            let wsDeduction = wholesaleMarginPercent + vatRate;
-            if (wsDeduction >= 100) wsDeduction = 99.9;
-            const wholesalePrice = baseCost / (1 - (wsDeduction / 100));
-            const wholesaleProfitAmount = wholesalePrice * (wholesaleMarginPercent / 100);
+            // เปอร์เซ็นต์กำไรขายส่งเป็น markup บนต้นทุน ไม่ใช่เปอร์เซ็นต์หักจากราคาขาย
+            // จากนั้นบวก VAT 7% ตามสวิตช์ VAT โดยไม่ดึงค่าแพ็คหรือค่าธรรมเนียมเข้ามาเกี่ยวข้อง
+            const wholesaleProfitAmount = baseCost * (wholesaleMarginPercent / 100);
+            const wholesalePriceBeforeVat = baseCost + wholesaleProfitAmount;
+            const wholesalePrice = includeVat ? wholesalePriceBeforeVat * 1.07 : wholesalePriceBeforeVat;
 
             // อัปเดตการแสดงผลการ์ดราคาส่ง Master Card
             document.getElementById('wsMarginDisplay').innerText = wholesaleMarginPercent + '%';
