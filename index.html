@@ -200,6 +200,39 @@
             { id: 'offline', name: 'Offline Retail (หน้าร้านปลีก)', color: 'from-slate-500 to-slate-600', border: 'border-slate-200', textTheme: 'text-slate-600' }
         ];
 
+
+        function calculateRetailBreakdown(totalCost, targetProfitPercent, deductionPercentages, includeVat) {
+            const vatDeductionPercent = includeVat ? (7 / 107) * 100 : 0;
+            const totalDeductionPercent = deductionPercentages.platformFee
+                + deductionPercentages.ads
+                + deductionPercentages.affiliate
+                + deductionPercentages.campaign
+                + vatDeductionPercent;
+
+            if (totalDeductionPercent >= 100) {
+                return null;
+            }
+
+            const targetProfitAmount = totalCost * (targetProfitPercent / 100);
+            const recommendedPrice = (totalCost + targetProfitAmount) / (1 - (totalDeductionPercent / 100));
+            const platformFeeAmount = recommendedPrice * (deductionPercentages.platformFee / 100);
+            const adsAmount = recommendedPrice * (deductionPercentages.ads / 100);
+            const affiliateAmount = recommendedPrice * (deductionPercentages.affiliate / 100);
+            const campaignAmount = recommendedPrice * (deductionPercentages.campaign / 100);
+            const vatAmount = includeVat ? (recommendedPrice * 7 / 107) : 0;
+            const netProfit = recommendedPrice - totalCost - platformFeeAmount - adsAmount - affiliateAmount - campaignAmount - vatAmount;
+
+            return {
+                recommendedPrice,
+                platformFeeAmount,
+                adsAmount,
+                affiliateAmount,
+                campaignAmount,
+                vatAmount,
+                netProfit
+            };
+        }
+
         function calculateMatrix() {
             // ดึงข้อมูลต้นทุนและมาร์จิ้น
             const baseCost = parseFloat(document.getElementById('baseCost').value) || 0;
@@ -252,22 +285,39 @@
             platformMetadata.forEach(platform => {
                 const currentPlatformFeePercent = platformFees[platform.id];
                 
-                // เปอร์เซ็นต์หักตามยอดขายจริงสำหรับการขายปลีก (ไม่รวมกำไร)
-                // VAT ในราคาขายเป็นภาษีแบบ VAT-inclusive จึงถอดภาษีด้วย 7/107 ไม่ใช่หัก 7% จากราคาขายเต็ม
-                // กำไรสุทธิที่ต้องการเป็น markup จากต้นทุนรวมสินค้า+แพ็ค แล้วจึงหาราคาขายที่ครอบคลุมค่าหักทั้งหมด
-                const retailVatDeductionPercent = includeVat ? (7 / 107) * 100 : 0;
-                let retailDeductionsPercent = currentPlatformFeePercent + adsPercent + affiliatePercent + campaignPercent + retailVatDeductionPercent;
-                if (retailDeductionsPercent >= 100) retailDeductionsPercent = 99.9;
+                const retailBreakdown = calculateRetailBreakdown(
+                    totalCostFixed,
+                    targetMarginPercent,
+                    {
+                        platformFee: currentPlatformFeePercent,
+                        ads: adsPercent,
+                        affiliate: affiliatePercent,
+                        campaign: campaignPercent
+                    },
+                    includeVat
+                );
 
-                const targetProfitAmount = totalCostFixed * (targetMarginPercent / 100);
-                const recommendedPrice = (totalCostFixed + targetProfitAmount) / (1 - (retailDeductionsPercent / 100));
-                
-                const platformFeeAmount = recommendedPrice * (currentPlatformFeePercent / 100);
-                const adsAmount = recommendedPrice * (adsPercent / 100);
-                const affiliateAmount = recommendedPrice * (affiliatePercent / 100);
-                const campaignAmount = recommendedPrice * (campaignPercent / 100);
-                const vatAmount = includeVat ? (recommendedPrice * 7 / 107) : 0;
-                const netProfit = recommendedPrice - totalCostFixed - platformFeeAmount - adsAmount - affiliateAmount - campaignAmount - vatAmount;
+                if (!retailBreakdown) {
+                    container.innerHTML += `
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border ${platform.border}">
+                            <div class="font-bold text-slate-900">${platform.name} <span class="text-xs text-slate-400 font-normal">(ขายปลีก)</span></div>
+                            <div class="mt-3 bg-rose-50 border border-rose-100 text-rose-700 rounded-xl p-4 text-sm font-semibold">
+                                คำนวณราคาไม่ได้: ค่าธรรมเนียม/งบการตลาด/VAT รวมกันเกินหรือเท่ากับ 100% ของราคาขาย
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const {
+                    recommendedPrice,
+                    platformFeeAmount,
+                    adsAmount,
+                    affiliateAmount,
+                    campaignAmount,
+                    vatAmount,
+                    netProfit
+                } = retailBreakdown;
 
                 // ตรวจสอบราคาคู่แข่งในตลาด
                 let statusBadge = '';
