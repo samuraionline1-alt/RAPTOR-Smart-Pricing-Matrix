@@ -253,8 +253,10 @@
                 const currentPlatformFeePercent = platformFees[platform.id];
                 
                 // เปอร์เซ็นต์หักตามยอดขายจริงสำหรับการขายปลีก (ไม่รวมกำไร)
+                // VAT ในราคาขายเป็นภาษีแบบ VAT-inclusive จึงถอดภาษีด้วย 7/107 ไม่ใช่หัก 7% จากราคาขายเต็ม
                 // กำไรสุทธิที่ต้องการเป็น markup จากต้นทุนรวมสินค้า+แพ็ค แล้วจึงหาราคาขายที่ครอบคลุมค่าหักทั้งหมด
-                let retailDeductionsPercent = currentPlatformFeePercent + adsPercent + affiliatePercent + campaignPercent + vatRate;
+                const retailVatDeductionPercent = includeVat ? (7 / 107) * 100 : 0;
+                let retailDeductionsPercent = currentPlatformFeePercent + adsPercent + affiliatePercent + campaignPercent + retailVatDeductionPercent;
                 if (retailDeductionsPercent >= 100) retailDeductionsPercent = 99.9;
 
                 const targetProfitAmount = totalCostFixed * (targetMarginPercent / 100);
@@ -264,7 +266,7 @@
                 const adsAmount = recommendedPrice * (adsPercent / 100);
                 const affiliateAmount = recommendedPrice * (affiliatePercent / 100);
                 const campaignAmount = recommendedPrice * (campaignPercent / 100);
-                const vatAmount = includeVat ? (recommendedPrice * 0.07) : 0;
+                const vatAmount = includeVat ? (recommendedPrice * 7 / 107) : 0;
                 const netProfit = recommendedPrice - totalCostFixed - platformFeeAmount - adsAmount - affiliateAmount - campaignAmount - vatAmount;
 
                 // ตรวจสอบราคาคู่แข่งในตลาด
