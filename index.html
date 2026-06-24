@@ -56,14 +56,14 @@
 
                         <div class="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-100">
                             <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1">กำไรขายส่งออฟไลน์ที่ต้องการ (%)</label>
-                            <p class="text-[11px] text-emerald-700/70 mb-2">คำนวณจากต้นทุนโดยตรง (ไม่คิดค่าธรรมเนียม/แอด/อินฟลูฯ)</p>
+                            <p class="text-[11px] text-emerald-700/70 mb-2">คำนวณจากต้นทุนสินค้าเท่านั้น (ไม่คิดค่าธรรมเนียม/ค่าแพ็ค/แอด/อินฟลูฯ)</p>
                             <div class="flex items-center gap-3">
                                 <input type="number" id="wholesaleMarginPercent" value="15" min="0" max="99" oninput="calculateMatrix()" class="w-full bg-white border border-emerald-200 rounded-xl px-4 py-2.5 font-bold text-emerald-700 focus:border-emerald-500 outline-none">
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200/60">
-                            <span class="text-sm font-medium text-slate-700">บวกภาษีมูลค่าเพิ่มในราคาปลีก (VAT 7%)</span>
+                            <span class="text-sm font-medium text-slate-700">บวกภาษีมูลค่าเพิ่มในราคาขาย (VAT 7%)</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="includeVat" checked onchange="calculateMatrix()" class="sr-only peer">
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -167,7 +167,7 @@
                         
                         <div class="sm:col-span-6 grid grid-cols-2 gap-2 text-xs">
                             <div class="p-2.5 bg-white/5 rounded-xl border border-white/5">
-                                <span class="block text-emerald-200/80">ต้นทุนรวมรวม (สินค้า+แพ็ค)</span>
+                                <span class="block text-emerald-200/80">ต้นทุนสินค้าขายส่ง (ไม่รวมแพ็ค)</span>
                                 <span class="text-sm font-bold" id="wsTotalCostDisplay">฿0.00</span>
                             </div>
                             <div class="p-2.5 bg-white/10 rounded-xl border border-white/15">
@@ -230,16 +230,17 @@
             // ----------------------------------------------------
             // 1. คำนวณราคาส่งออฟไลน์ (Isolated Wholesale Logic)
             // ----------------------------------------------------
-            // คิดราคาส่งผกผันจากต้นทุนเพียวๆ ตามเกณฑ์มาร์จิ้นขายส่งที่ต้องการ โดยไม่สนค่าธรรมเนียมใดๆ
-            let wsDeduction = wholesaleMarginPercent;
-            if (wsDeduction >= 100) wsDeduction = 99.9;
-            const wholesalePrice = totalCostFixed / (1 - (wsDeduction / 100));
-            const wholesaleProfitAmount = wholesalePrice * (wholesaleMarginPercent / 100);
+            // คิดราคาส่งจากต้นทุนสินค้าเท่านั้น ไม่รวมค่าธรรมเนียมแพลตฟอร์มและค่าแพ็ค
+            // เปอร์เซ็นต์กำไรขายส่งเป็น markup บนต้นทุน ไม่ใช่เปอร์เซ็นต์หักจากราคาขาย
+            // จากนั้นบวก VAT 7% ตามสวิตช์ VAT โดยไม่ดึงค่าแพ็คหรือค่าธรรมเนียมเข้ามาเกี่ยวข้อง
+            const wholesaleProfitAmount = baseCost * (wholesaleMarginPercent / 100);
+            const wholesalePriceBeforeVat = baseCost + wholesaleProfitAmount;
+            const wholesalePrice = includeVat ? wholesalePriceBeforeVat * 1.07 : wholesalePriceBeforeVat;
 
             // อัปเดตการแสดงผลการ์ดราคาส่ง Master Card
             document.getElementById('wsMarginDisplay').innerText = wholesaleMarginPercent + '%';
             document.getElementById('wholesalePriceDisplay').innerText = '฿' + wholesalePrice.toFixed(2);
-            document.getElementById('wsTotalCostDisplay').innerText = '฿' + totalCostFixed.toFixed(2);
+            document.getElementById('wsTotalCostDisplay').innerText = '฿' + baseCost.toFixed(2);
             document.getElementById('wsProfitAmountDisplay').innerText = '฿' + wholesaleProfitAmount.toFixed(2);
 
             // ----------------------------------------------------
